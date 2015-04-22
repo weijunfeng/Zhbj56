@@ -3,6 +3,7 @@ package org.itheima.zhbj56;
 import org.itheima.zhbj56.utils.CacheUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -104,12 +105,15 @@ public class WelcomeUI extends Activity
 		if (isFirstStart)
 		{
 			Log.d(TAG, "进入引导页面");
+			Intent intent = new Intent(this, GuideUI.class);
+			startActivity(intent);
 		}
 		else
 		{
 			Log.d(TAG, "进入主页面");
 		}
 
+		finish();
 	}
 
 	class WelcomeAnimationListener implements AnimationListener

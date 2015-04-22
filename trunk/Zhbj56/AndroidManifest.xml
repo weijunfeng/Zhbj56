@@ -14,15 +14,18 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.itheima.zhbj56.WelcomeUI"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:name=".WelcomeUI"
             android:label="@string/app_name"
-             >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".GuideUI"
+            android:label="@string/app_name" >
         </activity>
     </application>
 
