@@ -7,9 +7,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -26,9 +28,10 @@ import android.widget.ImageView.ScaleType;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class GuideUI extends Activity
+public class GuideUI extends Activity implements OnPageChangeListener
 {
 	private ViewPager		mPager;	// 页面中的Viewpager
+	private Button			mBtnStart;	// 开始按钮
 
 	private List<ImageView>	mPageDatas; // 页面对应的数据
 
@@ -50,6 +53,7 @@ public class GuideUI extends Activity
 	private void initView()
 	{
 		mPager = (ViewPager) findViewById(R.id.guide_pager);
+		mBtnStart = (Button) findViewById(R.id.guide_btn_start);
 	}
 
 	private void initData()
@@ -75,6 +79,9 @@ public class GuideUI extends Activity
 
 		// 给ViewPager设置数据
 		mPager.setAdapter(new GuideAdapter());// adapter --> list<数据类型>
+
+		// 监听ViewPager的滑动
+		mPager.setOnPageChangeListener(this);
 
 	}
 
@@ -112,6 +119,38 @@ public class GuideUI extends Activity
 		{
 			container.removeView((View) object);
 		}
+
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int position)
+	{
+		// 当页面选中时的回调
+		// if (position == mPageDatas.size() - 1)
+		// {
+		// // 显示button
+		// mBtnStart.setVisibility(View.VISIBLE);
+		// }
+		// else
+		// {
+		// // 隐藏button
+		// mBtnStart.setVisibility(View.GONE);
+		// }
+
+		mBtnStart.setVisibility(position == mPageDatas.size() - 1 ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state)
+	{
+		// TODO Auto-generated method stub
 
 	}
 }

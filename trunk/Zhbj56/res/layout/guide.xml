@@ -8,4 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- 开始按钮 -->
+
+    <Button
+        android:id="@+id/guide_btn_start"
+        android:layout_width="135dp"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/guide_btn_bg"
+        android:text="开始体验"
+        android:textColor="@color/guide_btn_text_color"
+        android:visibility="gone" />
+
 </RelativeLayout>
