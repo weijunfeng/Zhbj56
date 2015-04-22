@@ -10,11 +10,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 /**
  * @项目名: Zhbj56
@@ -34,6 +37,8 @@ public class GuideUI extends Activity implements OnPageChangeListener
 	private ViewPager		mPager;			// 页面中的Viewpager
 	private Button			mBtnStart;			// 开始按钮
 	private LinearLayout	mContainerPoint;	// 静态点的容器
+	private View			mFocusPoint;		// 动态的点
+	private int				mPointSpace;		// 两点间的距离
 
 	private List<ImageView>	mPageDatas;		// 页面对应的数据
 
@@ -57,6 +62,18 @@ public class GuideUI extends Activity implements OnPageChangeListener
 		mPager = (ViewPager) findViewById(R.id.guide_pager);
 		mBtnStart = (Button) findViewById(R.id.guide_btn_start);
 		mContainerPoint = (LinearLayout) findViewById(R.id.guide_container_point);
+		mFocusPoint = findViewById(R.id.guide_focus_point);
+
+		mContainerPoint.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+			@Override
+			public void onGlobalLayout()
+			{
+				mContainerPoint.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				mPointSpace = mContainerPoint.getChildAt(1).getLeft() - mContainerPoint.getChildAt(0).getLeft();
+			}
+		});
+
 	}
 
 	private void initData()
@@ -140,8 +157,15 @@ public class GuideUI extends Activity implements OnPageChangeListener
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
 	{
-		// TODO Auto-generated method stub
+		// positionOffset:滑动的百分比
+		// positionOffsetPixels:滑动的像素
 
+		int leftMargin = (int) (mPointSpace * positionOffset + position * mPointSpace + 0.5f);
+
+		RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) mFocusPoint.getLayoutParams();
+		params.leftMargin = leftMargin;
+
+		mFocusPoint.setLayoutParams(params);
 	}
 
 	@Override
