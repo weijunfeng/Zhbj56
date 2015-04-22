@@ -1,14 +1,21 @@
 package org.itheima.zhbj56.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.itheima.zhbj56.BaseFragment;
 import org.itheima.zhbj56.R;
+import org.itheima.zhbj56.base.TabController;
+import org.itheima.zhbj56.base.tab.HomeTabController;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -28,7 +35,9 @@ import android.widget.TextView;
 public class ContentFragment extends BaseFragment
 {
 	@ViewInject(R.id.content_pager)
-	private ViewPager	mPager; // ViewPager
+	private ViewPager			mPager;		// ViewPager
+
+	private List<TabController>	mPagerDatas;
 
 	@Override
 	protected View initView()
@@ -48,7 +57,57 @@ public class ContentFragment extends BaseFragment
 
 		return view;
 	}
-	
-	
+
+	@Override
+	protected void initData()
+	{
+		// 数据初始化
+		mPagerDatas = new ArrayList<TabController>();
+
+		mPagerDatas.add(new HomeTabController(mActivity));// 首页
+
+		// 给ViewPager去加载数据
+		mPager.setAdapter(new ContentPagerAdapter());// adapter ---> list<数据类型>
+
+	}
+
+	class ContentPagerAdapter extends PagerAdapter
+	{
+
+		@Override
+		public int getCount()
+		{
+			if (mPagerDatas != null) { return mPagerDatas.size(); }
+			return 0;
+		}
+
+		@Override
+		public boolean isViewFromObject(View view, Object object)
+		{
+			return view == object;
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup container, int position)
+		{
+			TabController controller = mPagerDatas.get(position);
+
+			// 获得视图
+			View rootView = controller.getRootView();
+			container.addView(rootView);
+
+			// 设置数据
+			controller.initData();
+
+			return rootView;
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object)
+		{
+			container.removeView((View) object);
+		}
+
+	}
 
 }

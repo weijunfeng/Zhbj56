@@ -38,5 +38,22 @@ public abstract class BaseFragment extends Fragment
 		return initView();
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+
+		// 加载数据
+		initData();
+	}
+
 	protected abstract View initView();
+
+	/**
+	 * 如果孩子要加载数据，那么就复写此方法
+	 */
+	protected void initData()
+	{
+
+	}
 }
