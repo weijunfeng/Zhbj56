@@ -3,6 +3,10 @@ package org.itheima.zhbj56.fragment;
 import org.itheima.zhbj56.BaseFragment;
 import org.itheima.zhbj56.R;
 
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.ViewInject;
+
+import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -23,6 +27,8 @@ import android.widget.TextView;
  */
 public class ContentFragment extends BaseFragment
 {
+	@ViewInject(R.id.content_pager)
+	private ViewPager	mPager; // ViewPager
 
 	@Override
 	protected View initView()
@@ -37,8 +43,12 @@ public class ContentFragment extends BaseFragment
 
 		View view = View.inflate(mActivity, R.layout.content, null);
 
-		return view;
+		// 注入ViewUtils工具
+		ViewUtils.inject(this, view);
 
+		return view;
 	}
+	
+	
 
 }
