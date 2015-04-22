@@ -3,12 +3,16 @@ package org.itheima.zhbj56;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.itheima.zhbj56.utils.CacheUtils;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -32,7 +36,7 @@ import android.widget.RelativeLayout;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class GuideUI extends Activity implements OnPageChangeListener
+public class GuideUI extends Activity implements OnPageChangeListener, OnClickListener
 {
 	private ViewPager		mPager;			// 页面中的Viewpager
 	private Button			mBtnStart;			// 开始按钮
@@ -73,6 +77,9 @@ public class GuideUI extends Activity implements OnPageChangeListener
 				mPointSpace = mContainerPoint.getChildAt(1).getLeft() - mContainerPoint.getChildAt(0).getLeft();
 			}
 		});
+
+		// 给button设置点击事件
+		mBtnStart.setOnClickListener(this);
 
 	}
 
@@ -190,6 +197,29 @@ public class GuideUI extends Activity implements OnPageChangeListener
 	public void onPageScrollStateChanged(int state)
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if (v == mBtnStart)
+		{
+			clickStart();
+		}
+	}
+
+	private void clickStart()
+	{
+		// 设置已经开启过应用
+		CacheUtils.setBoolean(this, WelcomeUI.KEY_FIRST_START, false);
+
+		// 页面跳转
+		Intent intent = new Intent(this, MainUI.class);
+		startActivity(intent);
+
+		// 结束自己
+		finish();
 
 	}
 }

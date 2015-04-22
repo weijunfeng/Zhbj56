@@ -38,7 +38,7 @@ public class WelcomeUI extends Activity
 
 	private static final String	TAG					= "WelcomeUI";
 
-	private static final String	KEY_FIRST_START		= "is_first_start"; // 标记是否是第一次打开的key
+	public static final String	KEY_FIRST_START		= "is_first_start"; // 标记是否是第一次打开的key
 
 	private View				mRootView;								// 根视图
 
@@ -111,6 +111,8 @@ public class WelcomeUI extends Activity
 		else
 		{
 			Log.d(TAG, "进入主页面");
+			Intent intent = new Intent(this, MainUI.class);
+			startActivity(intent);
 		}
 
 		finish();
