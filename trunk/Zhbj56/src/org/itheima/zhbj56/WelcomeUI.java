@@ -1,13 +1,17 @@
 package org.itheima.zhbj56;
 
+import org.itheima.zhbj56.utils.CacheUtils;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.Interpolator;
 import android.view.animation.RotateAnimation;
@@ -31,7 +35,11 @@ public class WelcomeUI extends Activity
 {
 	private final static long	ANIMATION_DURATION	= 1500;
 
-	private View				mRootView;					// 根视图
+	private static final String	TAG					= "WelcomeUI";
+
+	private static final String	KEY_FIRST_START		= "is_first_start"; // 标记是否是第一次打开的key
+
+	private View				mRootView;								// 根视图
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -82,5 +90,73 @@ public class WelcomeUI extends Activity
 		set.addAnimation(alphaAnimation);
 
 		mRootView.startAnimation(set);
+
+		// 监听动画执行
+		set.setAnimationListener(new WelcomeAnimationListener());
+	}
+
+	private void doNavgation()
+	{
+		// 页面跳转
+		// 根据情况进行页面跳转
+		// 如果是第一次打开应用程序，那么就进入引导页面，否则进入主页
+		boolean isFirstStart = CacheUtils.getBoolean(this, KEY_FIRST_START, true);
+		if (isFirstStart)
+		{
+			Log.d(TAG, "进入引导页面");
+		}
+		else
+		{
+			Log.d(TAG, "进入主页面");
+		}
+
+	}
+
+	class WelcomeAnimationListener implements AnimationListener
+	{
+
+		protected static final long	ANIMATION_DELAY	= 500;
+
+		@Override
+		public void onAnimationEnd(Animation animation)
+		{
+			// 动画结束后，等待一会，再进行页面跳转
+
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					// 等待
+					try
+					{
+						Thread.sleep(ANIMATION_DELAY);
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+
+					// 做页面跳转
+					doNavgation();
+				}
+			}).start();
+
+		}
+
+		@Override
+		public void onAnimationStart(Animation animation)
+		{
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation)
+		{
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 }
