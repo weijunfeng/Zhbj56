@@ -1,9 +1,11 @@
 package org.itheima.zhbj56.fragment;
 
 import org.itheima.zhbj56.BaseFragment;
+import org.itheima.zhbj56.R;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 /**
@@ -25,13 +27,18 @@ public class ContentFragment extends BaseFragment
 	@Override
 	protected View initView()
 	{
-		TextView tv = new TextView(mActivity);
+		// TextView tv = new TextView(mActivity);
+		//
+		// tv.setText("主页面");
+		// tv.setTextSize(24);
+		// tv.setGravity(Gravity.CENTER);
+		//
+		// return tv;
 
-		tv.setText("主页面");
-		tv.setTextSize(24);
-		tv.setGravity(Gravity.CENTER);
+		View view = View.inflate(mActivity, R.layout.content, null);
 
-		return tv;
+		return view;
+
 	}
 
 }

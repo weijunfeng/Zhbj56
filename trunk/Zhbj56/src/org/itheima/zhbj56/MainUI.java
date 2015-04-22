@@ -36,10 +36,10 @@ public class MainUI extends SlidingFragmentActivity
 		super.onCreate(savedInstanceState);
 
 		// 1. 设置主页内容
-		setContentView(R.layout.main);
+		setContentView(R.layout.content_container);
 
 		// 2. 设置菜单的布局
-		setBehindContentView(R.layout.menu);
+		setBehindContentView(R.layout.menu_container);
 
 		// 菜单的实例
 		SlidingMenu mMenu = getSlidingMenu();
