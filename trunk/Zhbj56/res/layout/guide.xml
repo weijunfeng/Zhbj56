@@ -22,4 +22,16 @@
         android:textColor="@color/guide_btn_text_color"
         android:visibility="gone" />
 
+    <!-- 静态点的容器 -->
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:id="@+id/guide_container_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
 </RelativeLayout>

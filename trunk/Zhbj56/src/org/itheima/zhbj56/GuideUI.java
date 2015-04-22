@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 
 /**
  * @项目名: Zhbj56
@@ -30,10 +31,11 @@ import android.widget.ImageView.ScaleType;
  */
 public class GuideUI extends Activity implements OnPageChangeListener
 {
-	private ViewPager		mPager;	// 页面中的Viewpager
-	private Button			mBtnStart;	// 开始按钮
+	private ViewPager		mPager;			// 页面中的Viewpager
+	private Button			mBtnStart;			// 开始按钮
+	private LinearLayout	mContainerPoint;	// 静态点的容器
 
-	private List<ImageView>	mPageDatas; // 页面对应的数据
+	private List<ImageView>	mPageDatas;		// 页面对应的数据
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +56,7 @@ public class GuideUI extends Activity implements OnPageChangeListener
 	{
 		mPager = (ViewPager) findViewById(R.id.guide_pager);
 		mBtnStart = (Button) findViewById(R.id.guide_btn_start);
+		mContainerPoint = (LinearLayout) findViewById(R.id.guide_container_point);
 	}
 
 	private void initData()
@@ -68,6 +71,7 @@ public class GuideUI extends Activity implements OnPageChangeListener
 		mPageDatas = new ArrayList<ImageView>();
 
 		ImageView iv;
+		View point;
 		for (int i = 0; i < imgRes.length; i++)
 		{
 			iv = new ImageView(this);
@@ -75,6 +79,17 @@ public class GuideUI extends Activity implements OnPageChangeListener
 			iv.setScaleType(ScaleType.FIT_XY);// 设置图片填充
 			// 添加到list中
 			mPageDatas.add(iv);
+
+			// 添加静态的点
+			point = new View(this);
+			point.setBackgroundResource(R.drawable.guide_point_normal);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(10, 10);
+			if (i != 0)
+			{
+				params.leftMargin = 10;
+			}
+
+			mContainerPoint.addView(point, params);
 		}
 
 		// 给ViewPager设置数据
