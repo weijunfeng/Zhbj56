@@ -1,9 +1,13 @@
 package org.itheima.zhbj56.base;
 
+import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.R;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,7 +25,7 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public abstract class TabController
+public abstract class TabController implements OnClickListener
 {
 	protected View			mRootView;
 	protected Context		mContext;
@@ -50,6 +54,9 @@ public abstract class TabController
 
 		// 初始化内容的View
 		mContentContainer.addView(initContentView(context));
+
+		// 设置菜单按钮的点击监听
+		mIbMenu.setOnClickListener(this);
 
 		return view;
 	}
@@ -82,5 +89,21 @@ public abstract class TabController
 	public void initData()
 	{
 
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if (v == mIbMenu)
+		{
+			clickMenu();
+		}
+	}
+
+	private void clickMenu()
+	{
+		// 点击时打开或是关闭菜单
+		SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
+		menu.toggle();// 如果菜单是打开的时候就关闭，否则相反
 	}
 }
