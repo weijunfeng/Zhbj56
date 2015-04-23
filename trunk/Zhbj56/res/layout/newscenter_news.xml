@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <com.viewpagerindicator.TabPageIndicator
+        <org.itheima.zhbj56.widget.TouchedTabPageIndicator
             android:id="@+id/newscenter_news_indicator"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
