@@ -3,13 +3,18 @@ package org.itheima.zhbj56.fragment;
 import java.util.List;
 
 import org.itheima.zhbj56.BaseFragment;
+import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,12 +32,13 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class MenuFragment extends BaseFragment
+public class MenuFragment extends BaseFragment implements OnItemClickListener
 {
 
 	private ListView					mListView;
 	private List<NewsCenterMenuBean>	mMenuDatas;	// 菜单对应的数据
 	private int							mCurrentMenu;
+	private MenuListAdapter				mAdapter;
 
 	@Override
 	protected View initView()
@@ -52,6 +58,9 @@ public class MenuFragment extends BaseFragment
 		mListView.setCacheColorHint(android.R.color.transparent);// 设置为透明
 		mListView.setSelector(android.R.color.transparent);
 
+		// 给listView设置item的click事件
+		mListView.setOnItemClickListener(this);
+
 		return mListView;
 	}
 
@@ -69,7 +78,8 @@ public class MenuFragment extends BaseFragment
 		mCurrentMenu = 0;
 
 		// 给listView设置 adapter ---> List
-		mListView.setAdapter(new MenuListAdapter());
+		mAdapter = new MenuListAdapter();
+		mListView.setAdapter(mAdapter);
 	}
 
 	class MenuListAdapter extends BaseAdapter
@@ -130,7 +140,7 @@ public class MenuFragment extends BaseFragment
 			// }
 
 			holder.tv.setEnabled(mCurrentMenu == position);
-			
+
 			return convertView;
 		}
 	}
@@ -138,6 +148,26 @@ public class MenuFragment extends BaseFragment
 	class ViewHolder
 	{
 		TextView	tv;
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+	{
+		MainUI ui = (MainUI) mActivity;
+
+		// 1.对应实体的内容要改变
+		ContentFragment contentFragment = ui.getContentFragment();
+		contentFragment.switchMenu(position);
+
+		// 2.菜单需要收起
+		SlidingMenu menu = ui.getSlidingMenu();
+		menu.toggle();
+
+		// 3.设置当前选中的菜单
+		mCurrentMenu = position;
+		// ui刷新
+		mAdapter.notifyDataSetChanged();
 
 	}
 }

@@ -1,9 +1,15 @@
 package org.itheima.zhbj56.base.tab;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.itheima.zhbj56.MainUI;
+import org.itheima.zhbj56.base.MenuController;
 import org.itheima.zhbj56.base.TabController;
+import org.itheima.zhbj56.base.newscenter.InteractMenuController;
+import org.itheima.zhbj56.base.newscenter.NewsMenuController;
+import org.itheima.zhbj56.base.newscenter.PicMenuController;
+import org.itheima.zhbj56.base.newscenter.TopicMenuController;
 import org.itheima.zhbj56.bean.NewsCenterBean;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 import org.itheima.zhbj56.fragment.MenuFragment;
@@ -22,6 +28,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 /**
@@ -42,7 +49,8 @@ public class NewsCenterTabController extends TabController
 {
 
 	protected static final String	TAG	= "NewsCenterTabController";
-	private TextView				tv;
+	private FrameLayout				mContainer;						// 内容的容器
+	private List<MenuController>	mMenuControllers;
 
 	public NewsCenterTabController(Context context) {
 		super(context);
@@ -51,13 +59,16 @@ public class NewsCenterTabController extends TabController
 	@Override
 	protected View initContentView(Context context)
 	{
-		tv = new TextView(context);
+		// tv = new TextView(context);
+		//
+		// tv.setTextSize(24);
+		// tv.setGravity(Gravity.CENTER);
+		// tv.setTextColor(Color.RED);
+		//
+		// return tv;
 
-		tv.setTextSize(24);
-		tv.setGravity(Gravity.CENTER);
-		tv.setTextColor(Color.RED);
-
-		return tv;
+		mContainer = new FrameLayout(mContext);
+		return mContainer;
 	}
 
 	@Override
@@ -67,9 +78,6 @@ public class NewsCenterTabController extends TabController
 		mIbMenu.setVisibility(View.VISIBLE);
 		// 设置title
 		mTvTitle.setText("新闻");
-
-		// 设置内容数据
-		tv.setText("新闻中心的内容");
 
 		// 去网络加载数据
 		// Url,请求方式,请求参数，消息头
@@ -135,5 +143,32 @@ public class NewsCenterTabController extends TabController
 		// 2-1.给菜单加载数据
 		MenuFragment menuFragment = ((MainUI) mContext).getMenuFragment();
 		menuFragment.setData(mMenuDatas);
+
+		// 2-2.给自己的内容实体加载数据
+		mMenuControllers = new ArrayList<MenuController>();
+		mMenuControllers.add(new NewsMenuController(mContext));// 新闻菜单
+		mMenuControllers.add(new TopicMenuController(mContext));// 专题菜单
+		mMenuControllers.add(new PicMenuController(mContext));// 组图菜单
+		mMenuControllers.add(new InteractMenuController(mContext));// 互动菜单
+
+		// 设置默认加载第一个
+		switchMenu(0);
+	}
+
+	@Override
+	public void switchMenu(int position)
+	{
+		// 清空容器
+		mContainer.removeAllViews();
+
+		MenuController menuController = mMenuControllers.get(position);
+
+		// 加载视图
+		View rootView = menuController.getRootView();
+		mContainer.addView(rootView);
+
+		// 加载数据
+		menuController.initData();
+
 	}
 }

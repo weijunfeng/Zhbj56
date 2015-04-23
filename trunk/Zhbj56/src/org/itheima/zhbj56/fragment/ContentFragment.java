@@ -49,6 +49,8 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 
 	private List<TabController>	mPagerDatas;
 
+	private int					mCurrentTab;
+
 	@Override
 	protected View initView()
 	{
@@ -87,6 +89,7 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		mRadioGroup.setOnCheckedChangeListener(this);
 
 		// 设置RadioGroup的默认选中值
+		mCurrentTab = 0;
 		mRadioGroup.check(R.id.content_rb_home);
 	}
 
@@ -134,31 +137,30 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId)
 	{
-		int currentTab = -1;
 		switch (checkedId)
 		{
 			case R.id.content_rb_home:
-				currentTab = 0;
+				mCurrentTab = 0;
 				// 设置菜单不可以滑动
 				setSlidingMenuTouchEnable(false);
 				break;
 			case R.id.content_rb_news:
-				currentTab = 1;
+				mCurrentTab = 1;
 				// 设置菜单可以滑动
 				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_smart:
-				currentTab = 2;
+				mCurrentTab = 2;
 				// 设置菜单可以滑动
 				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_gov:
-				currentTab = 3;
+				mCurrentTab = 3;
 				// 设置菜单可以滑动
 				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_setting:
-				currentTab = 4;
+				mCurrentTab = 4;
 				// 设置菜单不可以滑动
 				setSlidingMenuTouchEnable(false);
 				break;
@@ -167,7 +169,7 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		}
 
 		// 设置ViewPager的选中的页面
-		mPager.setCurrentItem(currentTab);
+		mPager.setCurrentItem(mCurrentTab);
 	}
 
 	/**
@@ -190,4 +192,10 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		menu.setTouchModeAbove(enable ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_NONE);
 	}
 
+	public void switchMenu(int position)
+	{
+		TabController tabController = mPagerDatas.get(mCurrentTab);
+		
+		tabController.switchMenu(position);
+	}
 }

@@ -106,4 +106,15 @@ public abstract class TabController implements OnClickListener
 		SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
 		menu.toggle();// 如果菜单是打开的时候就关闭，否则相反
 	}
+
+	/**
+	 * 用来切换菜单的方法,如果子类有菜单，那么就复写此方法
+	 * 
+	 * @param position
+	 */
+	public void switchMenu(int position)
+	{
+		// TODO Auto-generated method stub
+
+	}
 }
