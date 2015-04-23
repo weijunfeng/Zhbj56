@@ -48,9 +48,10 @@ import android.widget.TextView;
 public class NewsCenterTabController extends TabController
 {
 
-	protected static final String	TAG	= "NewsCenterTabController";
-	private FrameLayout				mContainer;						// 内容的容器
-	private List<MenuController>	mMenuControllers;
+	protected static final String		TAG	= "NewsCenterTabController";
+	private FrameLayout					mContainer;						// 内容的容器
+	private List<MenuController>		mMenuControllers;
+	private List<NewsCenterMenuBean>	mMenuDatas;
 
 	public NewsCenterTabController(Context context) {
 		super(context);
@@ -133,11 +134,11 @@ public class NewsCenterTabController extends TabController
 		Gson gson = new Gson();
 		// Class指的是要转化成的类型,javabean的类型
 		NewsCenterBean bean = gson.fromJson(json, NewsCenterBean.class);
-		List<NewsCenterMenuBean> mMenuDatas = bean.data;
+		mMenuDatas = bean.data;
 
-		String title = bean.data.get(0).children.get(0).title;
-		// 校验
-		Log.d(TAG, "校验 ：" + title);
+		// String title = bean.data.get(0).children.get(0).title;
+		// // 校验
+		// Log.d(TAG, "校验 ：" + title);
 
 		// 2. Model ---> View
 		// 2-1.给菜单加载数据
@@ -146,11 +147,30 @@ public class NewsCenterTabController extends TabController
 
 		// 2-2.给自己的内容实体加载数据
 		mMenuControllers = new ArrayList<MenuController>();
-		mMenuControllers.add(new NewsMenuController(mContext));// 新闻菜单
-		mMenuControllers.add(new TopicMenuController(mContext));// 专题菜单
-		mMenuControllers.add(new PicMenuController(mContext));// 组图菜单
-		mMenuControllers.add(new InteractMenuController(mContext));// 互动菜单
 
+		for (int i = 0; i < mMenuDatas.size(); i++)
+		{
+			NewsCenterMenuBean menuBean = mMenuDatas.get(i);
+			int type = menuBean.type;
+
+			switch (type)
+			{
+				case 1:
+					mMenuControllers.add(new NewsMenuController(mContext, menuBean));// 新闻菜单
+					break;
+				case 10:
+					mMenuControllers.add(new TopicMenuController(mContext));// 专题菜单
+					break;
+				case 2:
+					mMenuControllers.add(new PicMenuController(mContext));// 组图菜单
+					break;
+				case 3:
+					mMenuControllers.add(new InteractMenuController(mContext));// 互动菜单
+					break;
+				default:
+					break;
+			}
+		}
 		// 设置默认加载第一个
 		switchMenu(0);
 	}
@@ -166,6 +186,10 @@ public class NewsCenterTabController extends TabController
 		// 加载视图
 		View rootView = menuController.getRootView();
 		mContainer.addView(rootView);
+
+		// 设置title
+		NewsCenterMenuBean bean = mMenuDatas.get(position);
+		mTvTitle.setText(bean.title);
 
 		// 加载数据
 		menuController.initData();
