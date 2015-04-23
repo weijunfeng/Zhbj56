@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.itheima.zhbj56.BaseFragment;
+import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.base.TabController;
 import org.itheima.zhbj56.base.tab.GovTabController;
@@ -12,6 +13,7 @@ import org.itheima.zhbj56.base.tab.NewsCenterTabController;
 import org.itheima.zhbj56.base.tab.SettingTabController;
 import org.itheima.zhbj56.base.tab.SmartServiceTabController;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
@@ -137,18 +139,28 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		{
 			case R.id.content_rb_home:
 				currentTab = 0;
+				// 设置菜单不可以滑动
+				setSlidingMenuTouchEnable(false);
 				break;
 			case R.id.content_rb_news:
 				currentTab = 1;
+				// 设置菜单可以滑动
+				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_smart:
 				currentTab = 2;
+				// 设置菜单可以滑动
+				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_gov:
 				currentTab = 3;
+				// 设置菜单可以滑动
+				setSlidingMenuTouchEnable(true);
 				break;
 			case R.id.content_rb_setting:
 				currentTab = 4;
+				// 设置菜单不可以滑动
+				setSlidingMenuTouchEnable(false);
 				break;
 			default:
 				break;
@@ -156,6 +168,26 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 
 		// 设置ViewPager的选中的页面
 		mPager.setCurrentItem(currentTab);
+	}
+
+	/**
+	 * 设置滑动菜单是否可以滑动
+	 */
+	private void setSlidingMenuTouchEnable(boolean enable)
+	{
+		MainUI ui = (MainUI) mActivity;// 获取具体的宿主
+		SlidingMenu menu = ui.getSlidingMenu();
+		// if (enable)
+		// {
+		// // 设置touch可见
+		// menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		// }
+		// else
+		// {
+		// // 设置touch不可见
+		// menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		// }
+		menu.setTouchModeAbove(enable ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_NONE);
 	}
 
 }
