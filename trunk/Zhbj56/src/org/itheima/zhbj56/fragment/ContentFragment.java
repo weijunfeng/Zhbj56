@@ -12,6 +12,7 @@ import org.itheima.zhbj56.base.tab.HomeTabController;
 import org.itheima.zhbj56.base.tab.NewsCenterTabController;
 import org.itheima.zhbj56.base.tab.SettingTabController;
 import org.itheima.zhbj56.base.tab.SmartServiceTabController;
+import org.itheima.zhbj56.widget.NoScrollViewPager;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
@@ -19,6 +20,7 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +43,13 @@ import android.widget.TextView;
  */
 public class ContentFragment extends BaseFragment implements OnCheckedChangeListener
 {
+	public static final String	TAG	= "ContentFragment";
+
 	@ViewInject(R.id.content_pager)
-	private ViewPager			mPager;		// ViewPager
+	private NoScrollViewPager	mPager;					// ViewPager
 
 	@ViewInject(R.id.content_rg)
-	private RadioGroup			mRadioGroup;	// 底部的RadioGroup
+	private RadioGroup			mRadioGroup;				// 底部的RadioGroup
 
 	private List<TabController>	mPagerDatas;
 
@@ -112,6 +116,8 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		@Override
 		public Object instantiateItem(ViewGroup container, int position)
 		{
+			Log.d(TAG, "加载了" + position);
+
 			TabController controller = mPagerDatas.get(position);
 
 			// 获得视图
@@ -127,6 +133,7 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object)
 		{
+			Log.d(TAG, "销毁了" + position);
 			container.removeView((View) object);
 		}
 
@@ -195,7 +202,7 @@ public class ContentFragment extends BaseFragment implements OnCheckedChangeList
 	public void switchMenu(int position)
 	{
 		TabController tabController = mPagerDatas.get(mCurrentTab);
-		
+
 		tabController.switchMenu(position);
 	}
 }

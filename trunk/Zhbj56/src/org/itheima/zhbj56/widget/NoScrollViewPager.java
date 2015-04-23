@@ -18,7 +18,7 @@ import android.view.MotionEvent;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NoScrollViewPager extends ViewPager
+public class NoScrollViewPager extends LazyViewPager
 {
 
 	public NoScrollViewPager(Context context, AttributeSet attrs) {
