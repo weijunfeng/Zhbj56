@@ -10,6 +10,7 @@ import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.viewpagerindicator.TabPageIndicator;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -39,6 +40,9 @@ public class NewsMenuController extends MenuController
 	// private TextView tv;
 	@ViewInject(R.id.newscenter_news_pager)
 	private ViewPager			mPager;	// ViewPager
+
+	@ViewInject(R.id.newscenter_news_indicator)
+	private TabPageIndicator	mIndicator; // 指针
 
 	private NewsCenterMenuBean	mMenuBean;	// 菜单数据
 
@@ -77,6 +81,9 @@ public class NewsMenuController extends MenuController
 
 		// adapter ---> List
 		mPager.setAdapter(new NewsPagerAdapter());
+
+		// 给指针设置ViewPager
+		mIndicator.setViewPager(mPager);
 	}
 
 	class NewsPagerAdapter extends PagerAdapter
@@ -112,6 +119,18 @@ public class NewsMenuController extends MenuController
 		public void destroyItem(ViewGroup container, int position, Object object)
 		{
 			container.removeView((View) object);
+		}
+
+		// 返回ViewPager对应的title值
+		@Override
+		public CharSequence getPageTitle(int position)
+		{
+			if (mChildren != null)
+			{
+				NewsBean bean = mChildren.get(position);
+				return bean.title;
+			}
+			return super.getPageTitle(position);
 		}
 
 	}
