@@ -2,12 +2,14 @@ package org.itheima.zhbj56.base.newscenter;
 
 import java.util.List;
 
+import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.base.MenuController;
 import org.itheima.zhbj56.bean.NewsCenterBean;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsBean;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
@@ -17,6 +19,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +38,7 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NewsMenuController extends MenuController
+public class NewsMenuController extends MenuController implements OnPageChangeListener
 {
 
 	// private TextView tv;
@@ -85,6 +88,9 @@ public class NewsMenuController extends MenuController
 
 		// 给指针设置ViewPager
 		mIndicator.setViewPager(mPager);
+
+		// 对ViewPager的pager改变进行监听
+		mIndicator.setOnPageChangeListener(this);
 	}
 
 	@OnClick(R.id.newscenter_news_arrow)
@@ -142,6 +148,40 @@ public class NewsMenuController extends MenuController
 			}
 			return super.getPageTitle(position);
 		}
+
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int position)
+	{
+		SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
+
+		// // 页面选中时的回调
+		// if (position == 0)
+		// {
+		// // 希望可以打开菜单
+		// menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		// }
+		// else
+		// {
+		// // 不希望打开菜单
+		// menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		// }
+
+		menu.setTouchModeAbove(position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_NONE);
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state)
+	{
+		// TODO Auto-generated method stub
 
 	}
 
