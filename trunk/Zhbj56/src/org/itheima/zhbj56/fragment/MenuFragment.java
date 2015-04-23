@@ -2,9 +2,9 @@ package org.itheima.zhbj56.fragment;
 
 import java.util.List;
 
-import org.itheima.zhbj56.BaseFragment;
 import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.R;
+import org.itheima.zhbj56.base.BaseFragment;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
