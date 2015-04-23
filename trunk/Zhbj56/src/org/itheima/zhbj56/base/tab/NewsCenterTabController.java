@@ -1,7 +1,12 @@
 package org.itheima.zhbj56.base.tab;
 
+import java.util.List;
+
+import org.itheima.zhbj56.MainUI;
 import org.itheima.zhbj56.base.TabController;
 import org.itheima.zhbj56.bean.NewsCenterBean;
+import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
+import org.itheima.zhbj56.fragment.MenuFragment;
 import org.itheima.zhbj56.utils.Constans;
 
 import com.google.gson.Gson;
@@ -120,13 +125,15 @@ public class NewsCenterTabController extends TabController
 		Gson gson = new Gson();
 		// Class指的是要转化成的类型,javabean的类型
 		NewsCenterBean bean = gson.fromJson(json, NewsCenterBean.class);
+		List<NewsCenterMenuBean> mMenuDatas = bean.data;
 
 		String title = bean.data.get(0).children.get(0).title;
 		// 校验
 		Log.d(TAG, "校验 ：" + title);
 
 		// 2. Model ---> View
-		//
-
+		// 2-1.给菜单加载数据
+		MenuFragment menuFragment = ((MainUI) mContext).getMenuFragment();
+		menuFragment.setData(mMenuDatas);
 	}
 }
