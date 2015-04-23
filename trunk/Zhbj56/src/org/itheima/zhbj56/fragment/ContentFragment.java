@@ -6,7 +6,11 @@ import java.util.List;
 import org.itheima.zhbj56.BaseFragment;
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.base.TabController;
+import org.itheima.zhbj56.base.tab.GovTabController;
 import org.itheima.zhbj56.base.tab.HomeTabController;
+import org.itheima.zhbj56.base.tab.NewsCenterTabController;
+import org.itheima.zhbj56.base.tab.SettingTabController;
+import org.itheima.zhbj56.base.tab.SmartServiceTabController;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -65,6 +69,10 @@ public class ContentFragment extends BaseFragment
 		mPagerDatas = new ArrayList<TabController>();
 
 		mPagerDatas.add(new HomeTabController(mActivity));// 首页
+		mPagerDatas.add(new NewsCenterTabController(mActivity));// 新闻中心
+		mPagerDatas.add(new SmartServiceTabController(mActivity));// 智慧服务
+		mPagerDatas.add(new GovTabController(mActivity));// 政务
+		mPagerDatas.add(new SettingTabController(mActivity));// 设置
 
 		// 给ViewPager去加载数据
 		mPager.setAdapter(new ContentPagerAdapter());// adapter ---> list<数据类型>

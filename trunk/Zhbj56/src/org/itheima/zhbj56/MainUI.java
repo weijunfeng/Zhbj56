@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 
 /**
  * @项目名: Zhbj56
@@ -34,6 +35,8 @@ public class MainUI extends SlidingFragmentActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		// 去除title
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		// 1. 设置主页内容
 		setContentView(R.layout.content_container);

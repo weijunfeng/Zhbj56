@@ -9,24 +9,25 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
+ * 
  * @项目名: Zhbj56
  * @包名: org.itheima.zhbj56.base.tab
- * @类名: HomeTabController
+ * @类名: NewsCenterTabController
  * @创建者: 肖琦
- * @创建时间: 2015-4-22 下午4:43:41
- * @描述: 首页对应的controller
+ * @创建时间: 2015-4-23 上午8:48:47
+ * @描述: 新闻中心对应的Controller
  * 
  * @svn版本: $Rev$
  * @更新人: $Author$
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class HomeTabController extends TabController
+public class NewsCenterTabController extends TabController
 {
 
 	private TextView	tv;
 
-	public HomeTabController(Context context) {
+	public NewsCenterTabController(Context context) {
 		super(context);
 	}
 
@@ -46,11 +47,11 @@ public class HomeTabController extends TabController
 	public void initData()
 	{
 		// 设置menu按钮是否可见
-		mIbMenu.setVisibility(View.GONE);
+		mIbMenu.setVisibility(View.VISIBLE);
 		// 设置title
-		mTvTitle.setText("智慧北京");
+		mTvTitle.setText("新闻");
 
 		// 设置内容数据
-		tv.setText("首页的内容");
+		tv.setText("新闻中心的内容");
 	}
 }
