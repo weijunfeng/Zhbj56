@@ -10,6 +10,7 @@ import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.viewpagerindicator.TabPageIndicator;
 
 import android.content.Context;
@@ -84,6 +85,15 @@ public class NewsMenuController extends MenuController
 
 		// 给指针设置ViewPager
 		mIndicator.setViewPager(mPager);
+	}
+
+	@OnClick(R.id.newscenter_news_arrow)
+	public void clickArrow(View view)
+	{
+		// 点击箭头
+		// 选中下一个
+		int item = mPager.getCurrentItem();
+		mPager.setCurrentItem(++item);
 	}
 
 	class NewsPagerAdapter extends PagerAdapter
