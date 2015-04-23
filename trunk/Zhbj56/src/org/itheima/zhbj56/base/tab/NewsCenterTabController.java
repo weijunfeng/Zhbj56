@@ -1,8 +1,10 @@
 package org.itheima.zhbj56.base.tab;
 
 import org.itheima.zhbj56.base.TabController;
+import org.itheima.zhbj56.bean.NewsCenterBean;
 import org.itheima.zhbj56.utils.Constans;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -34,7 +36,7 @@ import android.widget.TextView;
 public class NewsCenterTabController extends TabController
 {
 
-	protected static final String	TAG	= null;
+	protected static final String	TAG	= "NewsCenterTabController";
 	private TextView				tv;
 
 	public NewsCenterTabController(Context context) {
@@ -92,6 +94,8 @@ public class NewsCenterTabController extends TabController
 
 				Log.d(TAG, "访问接口成功:" + result);
 
+				// 数据的处理
+				processData(result);
 			}
 
 			@Override
@@ -102,6 +106,27 @@ public class NewsCenterTabController extends TabController
 
 			}
 		});
+
+	}
+
+	/**
+	 * 处理数据
+	 * 
+	 * @param json
+	 */
+	protected void processData(String json)
+	{
+		// 1.json解析 String ----> Object
+		Gson gson = new Gson();
+		// Class指的是要转化成的类型,javabean的类型
+		NewsCenterBean bean = gson.fromJson(json, NewsCenterBean.class);
+
+		String title = bean.data.get(0).children.get(0).title;
+		// 校验
+		Log.d(TAG, "校验 ：" + title);
+
+		// 2. Model ---> View
+		//
 
 	}
 }
