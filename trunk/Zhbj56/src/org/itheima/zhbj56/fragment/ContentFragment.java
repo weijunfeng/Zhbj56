@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 /**
@@ -36,10 +37,13 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class ContentFragment extends BaseFragment
+public class ContentFragment extends BaseFragment implements OnCheckedChangeListener
 {
 	@ViewInject(R.id.content_pager)
 	private ViewPager			mPager;		// ViewPager
+
+	@ViewInject(R.id.content_rg)
+	private RadioGroup			mRadioGroup;	// 底部的RadioGroup
 
 	private List<TabController>	mPagerDatas;
 
@@ -77,6 +81,11 @@ public class ContentFragment extends BaseFragment
 		// 给ViewPager去加载数据
 		mPager.setAdapter(new ContentPagerAdapter());// adapter ---> list<数据类型>
 
+		// 给RadioGroup设置选中的监听
+		mRadioGroup.setOnCheckedChangeListener(this);
+
+		// 设置RadioGroup的默认选中值
+		mRadioGroup.check(R.id.content_rb_home);
 	}
 
 	class ContentPagerAdapter extends PagerAdapter
@@ -116,6 +125,37 @@ public class ContentFragment extends BaseFragment
 			container.removeView((View) object);
 		}
 
+	}
+
+	// 1. RadioGroup本身
+	// 2. 某一个选中的RadioButton的id
+	@Override
+	public void onCheckedChanged(RadioGroup group, int checkedId)
+	{
+		int currentTab = -1;
+		switch (checkedId)
+		{
+			case R.id.content_rb_home:
+				currentTab = 0;
+				break;
+			case R.id.content_rb_news:
+				currentTab = 1;
+				break;
+			case R.id.content_rb_smart:
+				currentTab = 2;
+				break;
+			case R.id.content_rb_gov:
+				currentTab = 3;
+				break;
+			case R.id.content_rb_setting:
+				currentTab = 4;
+				break;
+			default:
+				break;
+		}
+
+		// 设置ViewPager的选中的页面
+		mPager.setCurrentItem(currentTab);
 	}
 
 }

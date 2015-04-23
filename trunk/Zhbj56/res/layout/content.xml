@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <android.support.v4.view.ViewPager
+    <org.itheima.zhbj56.widget.NoScrollViewPager
         android:id="@+id/content_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
     <RadioGroup
+        android:id="@+id/content_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_tab_bg"
