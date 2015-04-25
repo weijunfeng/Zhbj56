@@ -92,7 +92,7 @@ import android.widget.Scroller;
 public class LazyViewPager extends ViewGroup
 {
 	private static final String		TAG						= "LazyViewPager";
-	private static final boolean	DEBUG					= true;
+	private static final boolean	DEBUG					= false;
 
 	private static final boolean	USE_CACHE				= false;
 
