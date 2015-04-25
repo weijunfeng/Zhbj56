@@ -1,6 +1,7 @@
 package org.itheima.zhbj56.base.newscenter;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.base.MenuController;
@@ -20,6 +21,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
