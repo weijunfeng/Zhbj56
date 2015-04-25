@@ -13,6 +13,7 @@ import org.itheima.zhbj56.base.newscenter.TopicMenuController;
 import org.itheima.zhbj56.bean.NewsCenterBean;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 import org.itheima.zhbj56.fragment.MenuFragment;
+import org.itheima.zhbj56.utils.CacheUtils;
 import org.itheima.zhbj56.utils.Constans;
 
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -47,9 +49,10 @@ import android.widget.TextView;
  */
 public class NewsCenterTabController extends TabController
 {
+	private static final long			DELAYED_TIME	= 2 * 60 * 1000;
 
-	protected static final String		TAG	= "NewsCenterTabController";
-	private FrameLayout					mContainer;						// 内容的容器
+	protected static final String		TAG				= "NewsCenterTabController";
+	private FrameLayout					mContainer;									// 内容的容器
 	private List<MenuController>		mMenuControllers;
 	private List<NewsCenterMenuBean>	mMenuDatas;
 
@@ -80,6 +83,27 @@ public class NewsCenterTabController extends TabController
 		// 设置title
 		mTvTitle.setText("新闻");
 
+		final String url = Constans.NEWSCENTER_URL;
+		// 到缓存中去取数据
+		String json = CacheUtils.getString(mContext, url);
+		long date = CacheUtils.getLong(mContext, url + "_date");
+		if (!TextUtils.isEmpty(json))
+		{
+			Log.d(TAG, "读取到缓存数据");
+			// 缓存中有数据
+			// 到缓存中加载数据
+			processData(json);
+
+			if (System.currentTimeMillis() - date < DELAYED_TIME)
+			{
+				// 没有超出缓存的时间
+
+				Log.d(TAG, "使用缓存，不使用网络");
+
+				return;
+			}
+		}
+
 		// 去网络加载数据
 		// Url,请求方式,请求参数，消息头
 		HttpUtils utils = new HttpUtils();
@@ -88,7 +112,6 @@ public class NewsCenterTabController extends TabController
 		// 请求方式:
 		// Url:
 		// 请求参数，消息头
-		String url = Constans.NEWSCENTER_URL;
 		// RequestParams params = new RequestParams();
 		// params.addBodyParameter(name, value);//请求内容中的
 		// params.addQueryStringParameter(name, value);//请求行中的
@@ -107,6 +130,13 @@ public class NewsCenterTabController extends TabController
 				String result = responseInfo.result;
 
 				Log.d(TAG, "访问接口成功:" + result);
+
+				Log.d(TAG, "设置缓存数据");
+				// 设置缓存数据
+				CacheUtils.setString(mContext, url, result);
+
+				// 缓存时间
+				CacheUtils.setLong(mContext, url + "_date", System.currentTimeMillis());
 
 				// 数据的处理
 				processData(result);
