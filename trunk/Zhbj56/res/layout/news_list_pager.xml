@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <org.itheima.zhbj56.widget.RefreshListView
         android:id="@+id/news_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:cacheColorHint="@android:color/transparent" >
-    </ListView>
+        android:cacheColorHint="@android:color/transparent" />
 
 </LinearLayout>

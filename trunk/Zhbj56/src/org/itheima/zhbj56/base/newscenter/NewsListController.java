@@ -10,6 +10,7 @@ import org.itheima.zhbj56.bean.NewsListPagerBean.NewsItemBean;
 import org.itheima.zhbj56.bean.NewsListPagerBean.NewsTopNewsBean;
 import org.itheima.zhbj56.utils.CacheUtils;
 import org.itheima.zhbj56.utils.Constans;
+import org.itheima.zhbj56.widget.RefreshListView;
 
 import android.content.Context;
 import android.os.Handler;
@@ -67,7 +68,7 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 	private LinearLayout			mPointContainer;
 
 	@ViewInject(R.id.news_list_view)
-	private ListView				mListView;
+	private RefreshListView			mListView;
 
 	private String					mUrl;
 
@@ -99,8 +100,8 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 		// ViewUtils注入
 		ViewUtils.inject(this, picLayout);
 
-		// 给ListView加载头布局
-		mListView.addHeaderView(picLayout);
+		// 给ListView加载自定义的头布局
+		mListView.addCustomHeaderView(picLayout);
 
 		return view;
 	}
