@@ -10,6 +10,7 @@ import org.itheima.zhbj56.bean.NewsCenterBean.NewsBean;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsCenterMenuBean;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnSlidingMenuTouchingListener;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
@@ -17,10 +18,14 @@ import com.viewpagerindicator.TabPageIndicator;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,8 +43,10 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NewsMenuController extends MenuController implements OnPageChangeListener
+public class NewsMenuController extends MenuController implements OnPageChangeListener, OnSlidingMenuTouchingListener
 {
+
+	private static final String	TAG	= "NewsMenuController";
 
 	// private TextView tv;
 	@ViewInject(R.id.newscenter_news_pager)
@@ -73,6 +80,15 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 
 		// 注入ViewUtils工具
 		ViewUtils.inject(this, view);
+
+		// 代码的版本适配
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+		{
+			// 如果小于3.0的版本，才监听
+			// 添加 SlidingMenu的滑动监听
+			SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
+			menu.setOnSlidingMenuTouchingListener(this);
+		}
 
 		return view;
 	}
@@ -183,6 +199,45 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onTouching(boolean isTouching, MotionEvent ev)
+	{
+		SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
+		int position = mPager.getCurrentItem();
+		
+		// 当触摸的时候,如果点在Indicator上就不打开slidingMenu
+		if (isTouching)
+		{
+			float rawX = ev.getRawX();// 自己相对屏幕的
+			float rawY = ev.getRawY();// 自己相对屏幕的
+
+			// 输出函数
+			int[] lw = new int[2];// [0] x，[1] y
+			// 获取indicator左上角的点的坐标
+			mIndicator.getLocationInWindow(lw);
+
+			int releatviX =  (int) (rawX - lw[0] + 0.5f);
+			int releatviY = (int) (rawY - lw[1] + 0.5f);
+			
+			// 输出函数
+			Rect outRect = new Rect();
+			mIndicator.getHitRect(outRect);
+
+			if (outRect.contains(releatviX, releatviY))
+			{
+				Log.d(TAG, "点击了IndicatorView");
+				// 不打开slidingMenu
+				menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+			} else {
+				Log.d(TAG, "没有点击了IndicatorView");
+				
+				//如果当前选中的是第0个
+				menu.setTouchModeAbove(position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_NONE);
+			}
+
+		}
 	}
 
 }
