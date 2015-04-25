@@ -50,14 +50,14 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 
 	// private TextView tv;
 	@ViewInject(R.id.newscenter_news_pager)
-	private ViewPager			mPager;	// ViewPager
+	private ViewPager			mPager;					// ViewPager
 
 	@ViewInject(R.id.newscenter_news_indicator)
-	private TabPageIndicator	mIndicator; // 指针
+	private TabPageIndicator	mIndicator;				// 指针
 
-	private NewsCenterMenuBean	mMenuBean;	// 菜单数据
+	private NewsCenterMenuBean	mMenuBean;					// 菜单数据
 
-	private List<NewsBean>		mChildren;	// ViewPager对应的数据
+	private List<NewsBean>		mChildren;					// ViewPager对应的数据
 
 	public NewsMenuController(Context context, NewsCenterMenuBean menuBean) {
 		super(context);
@@ -137,14 +137,27 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 		@Override
 		public Object instantiateItem(ViewGroup container, int position)
 		{
-			TextView tv = new TextView(mContext);
-			tv.setText(mChildren.get(position).title);
-			tv.setTextSize(24);
-			tv.setGravity(Gravity.CENTER);
-			tv.setTextColor(Color.RED);
-			container.addView(tv);
+			// TextView tv = new TextView(mContext);
+			// tv.setText(mChildren.get(position).title);
+			// tv.setTextSize(24);
+			// tv.setGravity(Gravity.CENTER);
+			// tv.setTextColor(Color.RED);
+			// container.addView(tv);
+			// return tv;
+			NewsBean bean = mChildren.get(position);
 
-			return tv;
+			NewsListController controller = new NewsListController(mContext, bean);
+
+			// 获取View
+			View rootView = controller.getRootView();
+
+			// 将View添加到ViewPager中
+			container.addView(rootView);
+
+			// 给controller初始化数据
+			controller.initData();
+
+			return rootView;
 		}
 
 		@Override
@@ -206,7 +219,7 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 	{
 		SlidingMenu menu = ((MainUI) mContext).getSlidingMenu();
 		int position = mPager.getCurrentItem();
-		
+
 		// 当触摸的时候,如果点在Indicator上就不打开slidingMenu
 		if (isTouching)
 		{
@@ -218,9 +231,9 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 			// 获取indicator左上角的点的坐标
 			mIndicator.getLocationInWindow(lw);
 
-			int releatviX =  (int) (rawX - lw[0] + 0.5f);
+			int releatviX = (int) (rawX - lw[0] + 0.5f);
 			int releatviY = (int) (rawY - lw[1] + 0.5f);
-			
+
 			// 输出函数
 			Rect outRect = new Rect();
 			mIndicator.getHitRect(outRect);
@@ -230,10 +243,12 @@ public class NewsMenuController extends MenuController implements OnPageChangeLi
 				Log.d(TAG, "点击了IndicatorView");
 				// 不打开slidingMenu
 				menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-			} else {
+			}
+			else
+			{
 				Log.d(TAG, "没有点击了IndicatorView");
-				
-				//如果当前选中的是第0个
+
+				// 如果当前选中的是第0个
 				menu.setTouchModeAbove(position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_NONE);
 			}
 
