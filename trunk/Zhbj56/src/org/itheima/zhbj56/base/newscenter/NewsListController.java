@@ -22,6 +22,7 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NewsListController extends MenuController
+public class NewsListController extends MenuController implements OnPageChangeListener
 {
 
 	private static final String		TAG	= "NewsListController";
@@ -121,9 +122,35 @@ public class NewsListController extends MenuController
 		NewsListPagerBean bean = gson.fromJson(json, NewsListPagerBean.class);
 		mPicDatas = bean.data.topnews;
 
+		// 去动态的添加点
+		for (int i = 0; i < mPicDatas.size(); i++)
+		{
+			View point = new View(mContext);
+			point.setBackgroundResource(R.drawable.dot_normal);
+
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(6, 6);
+			if (i != 0)
+			{
+				params.leftMargin = 8;
+			}
+			else
+			{
+				// 设置默认的图片
+				point.setBackgroundResource(R.drawable.dot_focus);
+			}
+			// 添加点
+			mPointContainer.addView(point, params);
+		}
+
 		// 给ViewPager初始化数据
 		mPicPager.setAdapter(new TopPicPagerAdapter());// adapter --->
 														// list
+
+		// 添加ViewPager的监听
+		mPicPager.setOnPageChangeListener(this);
+
+		// 设置title的默认值
+		mTvTitle.setText(mPicDatas.get(0).title);
 	}
 
 	class TopPicPagerAdapter extends PagerAdapter
@@ -165,6 +192,38 @@ public class NewsListController extends MenuController
 		{
 			container.removeView((View) object);
 		}
+
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int position)
+	{
+		// 当页面选中时的回调
+		NewsTopNewsBean bean = mPicDatas.get(position);
+
+		// 设置选中的点
+		int count = mPointContainer.getChildCount();
+		for (int i = 0; i < count; i++)
+		{
+			View view = mPointContainer.getChildAt(i);
+			view.setBackgroundResource(position == i ? R.drawable.dot_focus : R.drawable.dot_normal);
+		}
+
+		// 设置文本
+		mTvTitle.setText(bean.title);
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state)
+	{
+		// TODO Auto-generated method stub
 
 	}
 
