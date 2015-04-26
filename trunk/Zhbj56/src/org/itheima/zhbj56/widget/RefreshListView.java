@@ -7,8 +7,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  * @项目名: Zhbj56
@@ -39,20 +44,47 @@ public class RefreshListView extends ListView
 	private View				mCustomHeaderView;									// 头布局中
 																					// 自定义部分
 	private View				mRefreshView;										// 头布局中刷新的部分
+
+	private ImageView			mIvArrow;											// 刷新部分的箭头
+	private ProgressBar			mProgressBar;										// 刷新部分的进度条
+	private TextView			mTvState;											// 刷新部分的状态
+	private TextView			mTvTime;											// 记录上次刷新的时间
+
 	private int					mDownX;
 	private int					mDownY;
 	private int					mRefreshHeight;
+
+	private RotateAnimation		down2UpAnimation;
+	private RotateAnimation		up2DownAnimation;
 
 	public RefreshListView(Context context) {
 		super(context);
 
 		initHeaderLayout();
+		initAnimation();
 	}
 
 	public RefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		initHeaderLayout();
+		initAnimation();
+	}
+
+	private void initAnimation()
+	{
+		// 由下往上的动画
+		down2UpAnimation = new RotateAnimation(0, 180,
+												Animation.RELATIVE_TO_SELF, 0.5f,
+												Animation.RELATIVE_TO_SELF, 0.5f);
+		down2UpAnimation.setDuration(300);
+		down2UpAnimation.setFillAfter(true);
+
+		up2DownAnimation = new RotateAnimation(-180, 0,
+												Animation.RELATIVE_TO_SELF, 0.5f,
+												Animation.RELATIVE_TO_SELF, 0.5f);
+		up2DownAnimation.setDuration(300);
+		up2DownAnimation.setFillAfter(true);
 	}
 
 	// 初始化头布局
@@ -62,6 +94,10 @@ public class RefreshListView extends ListView
 		// 加载头布局
 		mHeaderLayout = (LinearLayout) View.inflate(getContext(), R.layout.refresh_header_layout, null);
 		mRefreshView = mHeaderLayout.findViewById(R.id.refresh_header_refresh);
+		mIvArrow = (ImageView) mHeaderLayout.findViewById(R.id.refresh_header_arrow);
+		mProgressBar = (ProgressBar) mHeaderLayout.findViewById(R.id.refresh_header_progress);
+		mTvState = (TextView) mHeaderLayout.findViewById(R.id.refresh_header_tv_state);
+		mTvTime = (TextView) mHeaderLayout.findViewById(R.id.refresh_header_tv_time);
 
 		// 添加到ListView的头布局中
 		this.addHeaderView(mHeaderLayout);
@@ -97,6 +133,12 @@ public class RefreshListView extends ListView
 				int diffY = moveY - mDownY;
 				// 由上往下拉 diffY > 0
 
+				// 如果当前的状态为正在刷新，就不去响应touch
+				if (mCurrentState == STATE_REFRESHING)
+				{
+					break;
+				}
+
 				// 如果第一个View是可见的情况下
 				if (getFirstVisiblePosition() == 0)
 				{
@@ -114,14 +156,16 @@ public class RefreshListView extends ListView
 							// 说明刷新部分没有完全露出来，现在的状态为 下拉刷新
 							mCurrentState = STATE_PULL_DOWN_REFRESH;
 							Log.d(TAG, "当前状态为 : 下拉刷新");
-							// UI需要刷新 TODO:
+							// UI需要刷新
+							refreshUI();
 						}
 						else if (paddingTop >= 0 && mCurrentState != STATE_RELEASE_REFRESH)
 						{
 							// 如果刷新部分完全露出来说明PaddingTop>=0,现在的状态为 释放刷新
 							mCurrentState = STATE_RELEASE_REFRESH;
 							Log.d(TAG, "当前状态为 : 释放刷新");
-							// UI需要刷新 TODO:
+							// UI需要刷新
+							refreshUI();
 						}
 						// 消费掉
 						return true;
@@ -131,11 +175,70 @@ public class RefreshListView extends ListView
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
+				// 松开时的逻辑
+
+				// 如果现在是 松开刷新的状态
+				if (mCurrentState == STATE_RELEASE_REFRESH)
+				{
+					// 1. paddingTop应该到 0
+					mHeaderLayout.setPadding(0, 0, 0, 0);
+
+					// 2. 刷新的状态应该变为 正在刷新
+					mCurrentState = STATE_REFRESHING;
+					// 3. UI刷新
+					refreshUI();
+				}
+
 				break;
 			default:
 				break;
 		}
 
 		return super.onTouchEvent(ev);
+	}
+
+	// 更新UI
+	private void refreshUI()
+	{
+		switch (mCurrentState)
+		{
+			case STATE_PULL_DOWN_REFRESH:
+				// 下拉刷新
+				// 1.箭头显示，进度不显示
+				mIvArrow.setVisibility(View.VISIBLE);
+				mProgressBar.setVisibility(View.INVISIBLE);
+				// 2.箭头由上往下 :动画操作
+				mIvArrow.startAnimation(up2DownAnimation);
+				// 3.文本变为 下拉刷新
+				mTvState.setText("下拉刷新");
+				break;
+			case STATE_RELEASE_REFRESH:
+				// 释放刷新
+				// 1.箭头显示，进度不显示
+				mIvArrow.setVisibility(View.VISIBLE);
+				mProgressBar.setVisibility(View.INVISIBLE);
+
+				// 2.箭头由下往上 :动画操作
+				mIvArrow.startAnimation(down2UpAnimation);
+
+				// 3.文本变为 松开刷新
+				mTvState.setText("松开刷新");
+
+				break;
+			case STATE_REFRESHING:
+				// 正在刷新
+				// 清空动画
+				mIvArrow.clearAnimation();
+				// 1.箭头不显示，进度显示
+				mIvArrow.setVisibility(View.INVISIBLE);
+				mProgressBar.setVisibility(View.VISIBLE);
+
+				// 2.文本变为 正在刷新
+				mTvState.setText("正在刷新");
+				break;
+
+			default:
+				break;
+		}
 	}
 }
