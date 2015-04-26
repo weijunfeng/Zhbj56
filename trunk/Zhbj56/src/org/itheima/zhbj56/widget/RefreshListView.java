@@ -1,11 +1,6 @@
 package org.itheima.zhbj56.widget;
 
 import org.itheima.zhbj56.R;
-import org.itheima.zhbj56.widget.RefreshListView.OnRefreshListener;
-
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -14,11 +9,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
 /**
  * @项目名: Zhbj56
@@ -33,7 +33,7 @@ import android.widget.TextView;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class RefreshListView extends ListView
+public class RefreshListView extends ListView implements OnScrollListener
 {
 	private static final String	TAG						= "RefreshListView";
 
@@ -136,6 +136,9 @@ public class RefreshListView extends ListView
 		mFooterLayout.measure(0, 0);
 		mFooterHeight = mFooterLayout.getMeasuredHeight();
 		mFooterLayout.setPadding(0, -mFooterHeight, 0, 0);
+
+		// 设置listView滚动的监听
+		this.setOnScrollListener(this);
 	}
 
 	public void addCustomHeaderView(View headerView)
@@ -371,5 +374,34 @@ public class RefreshListView extends ListView
 
 		// 正在刷新时的回调
 		void onRefreshing();
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState)
+	{
+		// 最后一个是footerView
+		// ListView的position起始是从headerView算起，以footerView结束
+
+		// 最后一个view可见的时候
+		int lastVisiblePosition = getLastVisiblePosition();// adatper
+		int count = getAdapter().getCount();
+
+		Log.d(TAG, "lastVisiblePosition : " + lastVisiblePosition + " : " + count);
+		// count - 1
+		if (lastVisiblePosition == count - 1
+			&& (scrollState == OnScrollListener.SCROLL_STATE_FLING
+			|| scrollState == OnScrollListener.SCROLL_STATE_IDLE))
+		{
+			// 可以看到最后一个
+			Log.d(TAG, "显示最后一个");
+		}
+
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+	{
+		// TODO Auto-generated method stub
+
 	}
 }
