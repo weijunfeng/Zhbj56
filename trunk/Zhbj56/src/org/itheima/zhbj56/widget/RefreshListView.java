@@ -66,10 +66,15 @@ public class RefreshListView extends ListView
 
 	private OnRefreshListener	mListener;
 
+	private View				mFooterLayout;
+
+	private int					mFooterHeight;
+
 	public RefreshListView(Context context) {
 		super(context);
 
 		initHeaderLayout();
+		initFooterLayout();
 		initAnimation();
 	}
 
@@ -77,6 +82,7 @@ public class RefreshListView extends ListView
 		super(context, attrs);
 
 		initHeaderLayout();
+		initFooterLayout();
 		initAnimation();
 	}
 
@@ -116,6 +122,20 @@ public class RefreshListView extends ListView
 		mRefreshHeight = mRefreshView.getMeasuredHeight();
 		Log.d(TAG, "刷新部分的高度:" + mRefreshHeight);
 		mHeaderLayout.setPadding(0, -mRefreshHeight, 0, 0);
+	}
+
+	private void initFooterLayout()
+	{
+		// 底部加载更多的view
+		mFooterLayout = View.inflate(getContext(), R.layout.refresh_footer_layout, null);
+
+		// 加载到listView的footer中
+		this.addFooterView(mFooterLayout);
+
+		// 隐藏footview
+		mFooterLayout.measure(0, 0);
+		mFooterHeight = mFooterLayout.getMeasuredHeight();
+		mFooterLayout.setPadding(0, -mFooterHeight, 0, 0);
 	}
 
 	public void addCustomHeaderView(View headerView)
