@@ -2,6 +2,7 @@ package org.itheima.zhbj56.base.newscenter;
 
 import java.util.List;
 
+import org.itheima.zhbj56.DetailUI;
 import org.itheima.zhbj56.R;
 import org.itheima.zhbj56.base.MenuController;
 import org.itheima.zhbj56.bean.NewsCenterBean.NewsBean;
@@ -14,6 +15,7 @@ import org.itheima.zhbj56.widget.RefreshListView;
 import org.itheima.zhbj56.widget.RefreshListView.OnRefreshListener;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -24,6 +26,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.BaseAdapter;
@@ -55,7 +59,7 @@ import com.lidroid.xutils.view.annotation.ViewInject;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NewsListController extends MenuController implements OnPageChangeListener, OnRefreshListener
+public class NewsListController extends MenuController implements OnPageChangeListener, OnRefreshListener, OnItemClickListener
 {
 
 	private static final String		TAG	= "NewsListController";
@@ -111,6 +115,9 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 
 		// 设置刷新监听
 		mListView.setOnRefreshListener(this);
+
+		// 设置item的监听
+		mListView.setOnItemClickListener(this);
 
 		return view;
 	}
@@ -503,5 +510,22 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 				mListView.setRefreshFinish();
 			}
 		});
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+	{
+		if (mNewsDatas == null) { return; }
+
+		position = position - 1;
+		Log.d(TAG, "点击的位置" + position);
+
+		if (position >= mNewsDatas.size()) { return; }
+
+		NewsItemBean bean = mNewsDatas.get(position);
+
+		Intent intent = new Intent(mContext, DetailUI.class);
+		intent.putExtra(DetailUI.KEY_URL, bean.url);
+		mContext.startActivity(intent);
 	}
 }

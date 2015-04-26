@@ -440,7 +440,6 @@ public class RefreshListView extends ListView implements OnScrollListener
 				}
 			}
 		}
-
 	}
 
 	@Override

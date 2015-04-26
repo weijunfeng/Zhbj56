@@ -32,7 +32,11 @@
         <activity
             android:name=".MainUI"
             android:label="@string/app_name"
-            android:theme="@style/StyledIndicators">
+            android:theme="@style/StyledIndicators" >
+        </activity>
+        <activity
+            android:name=".DetailUI"
+            android:label="@string/app_name" >
         </activity>
     </application>
 
