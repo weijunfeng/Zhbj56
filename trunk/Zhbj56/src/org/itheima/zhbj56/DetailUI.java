@@ -1,6 +1,7 @@
 package org.itheima.zhbj56;
 
 import org.itheima.zhbj56.utils.CacheUtils;
+import org.itheima.zhbj56.utils.ShareUtils;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -130,6 +131,7 @@ public class DetailUI extends Activity
 	public void clickShare(View view)
 	{
 		// 分享
+		ShareUtils.showShare(this);
 	}
 
 	@OnClick(R.id.detail_iv_textsize)
