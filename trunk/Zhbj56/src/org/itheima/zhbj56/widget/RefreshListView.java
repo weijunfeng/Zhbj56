@@ -193,7 +193,7 @@ public class RefreshListView extends ListView implements OnScrollListener
 					if (hliw[1] < lliw[1])
 					{
 						// 不响应下拉刷新
-						break;
+						return super.onTouchEvent(ev);
 					}
 				}
 

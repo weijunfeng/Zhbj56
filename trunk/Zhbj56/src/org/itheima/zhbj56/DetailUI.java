@@ -126,6 +126,12 @@ public class DetailUI extends Activity
 		finish();
 	}
 
+	@OnClick(R.id.detail_iv_share)
+	public void clickShare(View view)
+	{
+		// 分享
+	}
+
 	@OnClick(R.id.detail_iv_textsize)
 	public void clickTextSizeChange(View view)
 	{
