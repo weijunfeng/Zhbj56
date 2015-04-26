@@ -2,6 +2,10 @@ package org.itheima.zhbj56.widget;
 
 import org.itheima.zhbj56.R;
 
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -56,6 +60,8 @@ public class RefreshListView extends ListView
 
 	private RotateAnimation		down2UpAnimation;
 	private RotateAnimation		up2DownAnimation;
+
+	private int					mCurrentPaddingTop;
 
 	public RefreshListView(Context context) {
 		super(context);
@@ -139,6 +145,28 @@ public class RefreshListView extends ListView
 					break;
 				}
 
+				// 如果第一个View是可见的情况下，并且headerView完全可见的情况下
+				if (mCustomHeaderView != null)
+				{
+					// 如果CustomHeaderView没有完全露出来，不去响应下拉刷新
+
+					// 取出listView的左上角的点
+					int[] lliw = new int[2];
+					this.getLocationInWindow(lliw);
+					Log.d(TAG, "listView Y : " + lliw[1]);
+
+					// 取出customheaderView左上角的点
+					int[] hliw = new int[2];
+					mCustomHeaderView.getLocationInWindow(hliw);
+					Log.d(TAG, "customHeader Y : " + hliw[1]);
+
+					if (hliw[1] < lliw[1])
+					{
+						// 不响应下拉刷新
+						break;
+					}
+				}
+
 				// 如果第一个View是可见的情况下
 				if (getFirstVisiblePosition() == 0)
 				{
@@ -147,11 +175,11 @@ public class RefreshListView extends ListView
 						Log.d(TAG, "第一个View可见");
 						// 希望看到刷新的View
 						// 改变头布局的PaddingTop
-						int paddingTop = diffY - mRefreshHeight;
-						mHeaderLayout.setPadding(0, paddingTop, 0, 0);
+						mCurrentPaddingTop = diffY - mRefreshHeight;
+						mHeaderLayout.setPadding(0, mCurrentPaddingTop, 0, 0);
 
 						// 如果paddingTop是负数值的时候，说明刷新部分没有完全露出来，现在的状态为 下拉刷新
-						if (paddingTop < 0 && mCurrentState != STATE_PULL_DOWN_REFRESH)
+						if (mCurrentPaddingTop < 0 && mCurrentState != STATE_PULL_DOWN_REFRESH)
 						{
 							// 说明刷新部分没有完全露出来，现在的状态为 下拉刷新
 							mCurrentState = STATE_PULL_DOWN_REFRESH;
@@ -159,7 +187,7 @@ public class RefreshListView extends ListView
 							// UI需要刷新
 							refreshUI();
 						}
-						else if (paddingTop >= 0 && mCurrentState != STATE_RELEASE_REFRESH)
+						else if (mCurrentPaddingTop >= 0 && mCurrentState != STATE_RELEASE_REFRESH)
 						{
 							// 如果刷新部分完全露出来说明PaddingTop>=0,现在的状态为 释放刷新
 							mCurrentState = STATE_RELEASE_REFRESH;
@@ -175,18 +203,41 @@ public class RefreshListView extends ListView
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
+				mDownX = 0;// 清空数据
+				mDownY = 0;// 清空数据
+
 				// 松开时的逻辑
 
 				// 如果现在是 松开刷新的状态
 				if (mCurrentState == STATE_RELEASE_REFRESH)
 				{
+					Log.d(TAG, "up后，正在刷新");
 					// 1. paddingTop应该到 0
-					mHeaderLayout.setPadding(0, 0, 0, 0);
+					// mHeaderLayout.setPadding(0, 0, 0, 0);//太突然
+
+					// ObjectAnimator.ofInt(mHeaderLayout, "scrollX", 0, 1,2,1);
+					int start = mCurrentPaddingTop;
+					int end = 0;
+					doHeaderAnimation(start, end);
 
 					// 2. 刷新的状态应该变为 正在刷新
 					mCurrentState = STATE_REFRESHING;
 					// 3. UI刷新
 					refreshUI();
+				}
+
+				// 如果 现在的状态是 下拉刷新
+				if (mCurrentState == STATE_PULL_DOWN_REFRESH)
+				{
+					Log.d(TAG, "up后，下拉刷新");
+
+					// 1. paddingTop = -refreshHeight
+					// mHeaderLayout.setPadding(0, -mRefreshHeight, 0, 0);// 太突然
+
+					int start = mCurrentPaddingTop;
+					int end = -mRefreshHeight;
+					doHeaderAnimation(start, end);
+
 				}
 
 				break;
@@ -195,6 +246,24 @@ public class RefreshListView extends ListView
 		}
 
 		return super.onTouchEvent(ev);
+	}
+
+	private void doHeaderAnimation(int start, int end)
+	{
+		// 模拟数据的变化 100-->0 100,90,80
+		ValueAnimator animator = ValueAnimator.ofInt(start, end);
+		animator.setDuration(300);
+		animator.addUpdateListener(new AnimatorUpdateListener() {
+
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation)
+			{
+				int animatedValue = (Integer) animation.getAnimatedValue();
+
+				mHeaderLayout.setPadding(0, animatedValue, 0, 0);
+			}
+		});
+		animator.start();
 	}
 
 	// 更新UI
