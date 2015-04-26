@@ -22,6 +22,7 @@ public class HorizontalViewPager extends ViewPager
 {
 
 	private int	mDownX;
+	private int	mDownY;
 
 	public HorizontalViewPager(Context context) {
 		super(context);
@@ -45,49 +46,61 @@ public class HorizontalViewPager extends ViewPager
 		switch (action)
 		{
 			case MotionEvent.ACTION_DOWN:
-				requestDisallowInterceptTouchEvent(true);
+				getParent().requestDisallowInterceptTouchEvent(true);
 				mDownX = (int) (ev.getX() + 0.5f);
+				mDownY = (int) (ev.getY() + 0.5f);
 				break;
 			case MotionEvent.ACTION_MOVE:
 				int moveX = (int) (ev.getX() + 0.5f);
+				int moveY = (int) (ev.getY() + 0.5f);
 
 				int diffX = moveX - mDownX;
+				int diffY = moveY - mDownY;
 
-				// diffX > 0 从左往右
-				// diffX < 0 从右往左
-				// 当第一个页面显示时
-				if (position == 0)
+				if (Math.abs(diffY) > Math.abs(diffX))
 				{
-					if (diffX > 0)
-					{
-						// 希望打开菜单,希望父容器响应touch，父去拦截touch
-						requestDisallowInterceptTouchEvent(false);
-					}
-					else
-					{
-						// 从右往左，希望自己响应touch
-						requestDisallowInterceptTouchEvent(true);
-					}
-				}
-				else if (position > 0 && position < getAdapter().getCount() - 1)
-				{
-					// 当中间页面显示时，都希望自己响应touch
-					requestDisallowInterceptTouchEvent(true);
+					// 垂直方向运动
+					getParent().requestDisallowInterceptTouchEvent(false);
 				}
 				else
 				{
-					// 最后一个页面
-					// 如果从左往右滑动,希望看到上一个图片，自己响应touch
-					if (diffX > 0)
+
+					// diffX > 0 从左往右
+					// diffX < 0 从右往左
+					// 当第一个页面显示时
+					if (position == 0)
 					{
-						requestDisallowInterceptTouchEvent(true);
+						if (diffX > 0)
+						{
+							// 希望打开菜单,希望父容器响应touch，父去拦截touch
+							getParent().requestDisallowInterceptTouchEvent(false);
+						}
+						else
+						{
+							// 从右往左，希望自己响应touch
+							getParent().requestDisallowInterceptTouchEvent(true);
+						}
+					}
+					else if (position > 0 && position < getAdapter().getCount() - 1)
+					{
+						// 当中间页面显示时，都希望自己响应touch
+						getParent().requestDisallowInterceptTouchEvent(true);
 					}
 					else
 					{
-						// 让父容器响应
-						requestDisallowInterceptTouchEvent(false);
-					}
+						// 最后一个页面
+						// 如果从左往右滑动,希望看到上一个图片，自己响应touch
+						if (diffX > 0)
+						{
+							getParent().requestDisallowInterceptTouchEvent(true);
+						}
+						else
+						{
+							// 让父容器响应
+							getParent().requestDisallowInterceptTouchEvent(false);
+						}
 
+					}
 				}
 
 				break;
