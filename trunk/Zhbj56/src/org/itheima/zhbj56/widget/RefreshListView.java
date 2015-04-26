@@ -1,6 +1,7 @@
 package org.itheima.zhbj56.widget;
 
 import org.itheima.zhbj56.R;
+import org.itheima.zhbj56.widget.RefreshListView.OnRefreshListener;
 
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -62,6 +63,8 @@ public class RefreshListView extends ListView
 	private RotateAnimation		up2DownAnimation;
 
 	private int					mCurrentPaddingTop;
+
+	private OnRefreshListener	mListener;
 
 	public RefreshListView(Context context) {
 		super(context);
@@ -224,6 +227,12 @@ public class RefreshListView extends ListView
 					mCurrentState = STATE_REFRESHING;
 					// 3. UI刷新
 					refreshUI();
+
+					// 调用接口，通知正在刷新
+					if (mListener != null)
+					{
+						mListener.onRefreshing();
+					}
 				}
 
 				// 如果 现在的状态是 下拉刷新
@@ -246,6 +255,22 @@ public class RefreshListView extends ListView
 		}
 
 		return super.onTouchEvent(ev);
+	}
+
+	/**
+	 * 设置下拉刷新结束
+	 */
+	public void setRefreshFinish()
+	{
+		mCurrentState = STATE_PULL_DOWN_REFRESH;
+		// UI更新
+		refreshUI();
+
+		// 做动画
+		int start = 0;
+		int end = -mRefreshHeight;
+		doHeaderAnimation(start, end);
+
 	}
 
 	private void doHeaderAnimation(int start, int end)
@@ -309,5 +334,22 @@ public class RefreshListView extends ListView
 			default:
 				break;
 		}
+	}
+
+	/**
+	 * 设置监听
+	 * 
+	 * @param listener
+	 */
+	public void setOnRefreshListener(OnRefreshListener listener)
+	{
+		this.mListener = listener;
+	}
+
+	public interface OnRefreshListener
+	{
+
+		// 正在刷新时的回调
+		void onRefreshing();
 	}
 }

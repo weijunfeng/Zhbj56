@@ -11,6 +11,7 @@ import org.itheima.zhbj56.bean.NewsListPagerBean.NewsTopNewsBean;
 import org.itheima.zhbj56.utils.CacheUtils;
 import org.itheima.zhbj56.utils.Constans;
 import org.itheima.zhbj56.widget.RefreshListView;
+import org.itheima.zhbj56.widget.RefreshListView.OnRefreshListener;
 
 import android.content.Context;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.BitmapUtils;
@@ -53,7 +55,7 @@ import com.lidroid.xutils.view.annotation.ViewInject;
  * @更新时间: $Date$
  * @更新描述: TODO
  */
-public class NewsListController extends MenuController implements OnPageChangeListener
+public class NewsListController extends MenuController implements OnPageChangeListener, OnRefreshListener
 {
 
 	private static final String		TAG	= "NewsListController";
@@ -103,6 +105,9 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 		// 给ListView加载自定义的头布局
 		mListView.addCustomHeaderView(picLayout);
 
+		// 设置刷新监听
+		mListView.setOnRefreshListener(this);
+
 		return view;
 	}
 
@@ -111,7 +116,6 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 	{
 
 		// 初始化Pager对应的List数据
-		HttpUtils utils = new HttpUtils();
 		final String url = Constans.BASE_URL + mUrl;
 
 		// 获取缓存
@@ -121,25 +125,46 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 			processData(json);
 		}
 
+		getDataFromNet(url, false);
+	}
+
+	// 从网络获取数据
+	private void getDataFromNet(final String url, final boolean refresh)
+	{
+		HttpUtils utils = new HttpUtils();
 		utils.send(HttpMethod.GET, url, new RequestCallBack<String>() {
 
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo)
 			{
+
 				// 获得结果
 				String result = responseInfo.result;
+
+				Log.d(TAG, "数据加载成功 ：" + result);
 
 				// 设置缓存
 				CacheUtils.setString(mContext, url, result);
 
 				processData(result);
+
+				if (refresh)
+				{
+					// 通知ListView刷新完成
+					mListView.setRefreshFinish();
+				}
 			}
 
 			@Override
 			public void onFailure(HttpException error, String msg)
 			{
-				// TODO Auto-generated method stub
+				if (refresh)
+				{
+					// 通知ListView刷新完成
+					mListView.setRefreshFinish();
 
+					Toast.makeText(mContext, "网络访问失败", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 	}
@@ -410,6 +435,18 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 	public void onPageScrollStateChanged(int state)
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRefreshing()
+	{
+		// 正在刷新中
+		Log.d(TAG, "回调了正在刷新");
+
+		// 重新请求当前页面的数据
+		final String url = Constans.BASE_URL + mUrl;
+		getDataFromNet(url, true);
 
 	}
 
