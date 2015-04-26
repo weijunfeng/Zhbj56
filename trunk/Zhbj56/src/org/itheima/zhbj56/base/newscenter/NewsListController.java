@@ -80,7 +80,11 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 
 	private AutoSwitchPicTask		mAutoSwitchTask;
 
-	private List<NewsItemBean>		mNewsDatas;
+	private List<NewsItemBean>		mNewsDatas;				// Adatper对应的数据
+
+	private String					mMoreUrl;
+
+	private ListDataAdapter			mNewsAdapter;
 
 	public NewsListController(Context context, NewsBean data) {
 		super(context);
@@ -182,6 +186,7 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 		NewsListPagerBean bean = gson.fromJson(json, NewsListPagerBean.class);
 		mPicDatas = bean.data.topnews;
 		mNewsDatas = bean.data.news;
+		mMoreUrl = bean.data.more;
 
 		// 清空点
 		mPointContainer.removeAllViews();
@@ -251,7 +256,8 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 		});
 
 		// 加载listView的数据
-		mListView.setAdapter(new ListDataAdapter());// adapter --->List
+		mNewsAdapter = new ListDataAdapter();
+		mListView.setAdapter(mNewsAdapter);// adapter --->List
 
 	}
 
@@ -450,4 +456,52 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 
 	}
 
+	@Override
+	public void onLoadMore()
+	{
+		if (TextUtils.isEmpty(mMoreUrl))
+		{
+			// 没有更多数据
+			Toast.makeText(mContext, "没有更多数据", Toast.LENGTH_SHORT).show();
+
+			// 设置加载完成,没有更多
+			mListView.setRefreshFinish(true);
+
+			return;
+		}
+
+		// 加载更多的回调
+		HttpUtils utils = new HttpUtils();
+		String url = Constans.BASE_URL + mMoreUrl;
+		utils.send(HttpMethod.GET, url, new RequestCallBack<String>() {
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo)
+			{
+				// 获取更多的数据
+				String result = responseInfo.result;
+
+				// 解析json
+				Gson gson = new Gson();
+				NewsListPagerBean bean = gson.fromJson(result, NewsListPagerBean.class);
+				List<NewsItemBean> news = bean.data.news;
+				// 设置moreUrl
+				mMoreUrl = bean.data.more;
+				// 追加到List数据中
+				mNewsDatas.addAll(news);
+				// UI更新,listView对应的adapter 进行更新
+				mNewsAdapter.notifyDataSetChanged();
+
+				// 设置加载完成
+				mListView.setRefreshFinish();
+			}
+
+			@Override
+			public void onFailure(HttpException error, String msg)
+			{
+				// 设置加载完成
+				mListView.setRefreshFinish();
+			}
+		});
+	}
 }

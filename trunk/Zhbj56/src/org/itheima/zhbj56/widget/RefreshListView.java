@@ -70,6 +70,10 @@ public class RefreshListView extends ListView implements OnScrollListener
 
 	private int					mFooterHeight;
 
+	private boolean				isLoadMore;										// 用来标记是否是正在加载更多
+
+	private boolean				noMore;
+
 	public RefreshListView(Context context) {
 		super(context);
 
@@ -280,20 +284,43 @@ public class RefreshListView extends ListView implements OnScrollListener
 		return super.onTouchEvent(ev);
 	}
 
+	public void setRefreshFinish()
+	{
+		// 默认有更多
+		setRefreshFinish(false);
+	}
+
 	/**
 	 * 设置下拉刷新结束
 	 */
-	public void setRefreshFinish()
+	public void setRefreshFinish(boolean noMore)
 	{
-		mCurrentState = STATE_PULL_DOWN_REFRESH;
-		// UI更新
-		refreshUI();
+		if (isLoadMore)
+		{
+			isLoadMore = false;
 
-		// 做动画
-		int start = 0;
-		int end = -mRefreshHeight;
-		doHeaderAnimation(start, end);
+			Log.d(TAG, "加载更多完成");
+			// 标记改变
 
+			this.noMore = noMore;
+
+			// 如果加载更多完成了
+			mFooterLayout.setPadding(0, -mFooterHeight, 0, 0);
+		}
+		else
+		{
+			this.noMore = false;
+
+			// 针对下拉刷新
+			mCurrentState = STATE_PULL_DOWN_REFRESH;
+			// UI更新
+			refreshUI();
+
+			// 做动画
+			int start = 0;
+			int end = -mRefreshHeight;
+			doHeaderAnimation(start, end);
+		}
 	}
 
 	private void doHeaderAnimation(int start, int end)
@@ -374,6 +401,9 @@ public class RefreshListView extends ListView implements OnScrollListener
 
 		// 正在刷新时的回调
 		void onRefreshing();
+
+		// 正在加载更多时的回调
+		void onLoadMore();
 	}
 
 	@Override
@@ -392,8 +422,23 @@ public class RefreshListView extends ListView implements OnScrollListener
 			&& (scrollState == OnScrollListener.SCROLL_STATE_FLING
 			|| scrollState == OnScrollListener.SCROLL_STATE_IDLE))
 		{
-			// 可以看到最后一个
-			Log.d(TAG, "显示最后一个");
+			// 有更多并且不是加载更多
+			if (!isLoadMore && !noMore)
+			{
+				// 改变标记
+				isLoadMore = true;
+
+				// 可以看到最后一个
+				Log.d(TAG, "显示最后一个");
+				mFooterLayout.setPadding(0, 0, 0, 0);// 完全显示
+
+				setSelection(count + 2);
+
+				if (mListener != null)
+				{
+					mListener.onLoadMore();
+				}
+			}
 		}
 
 	}

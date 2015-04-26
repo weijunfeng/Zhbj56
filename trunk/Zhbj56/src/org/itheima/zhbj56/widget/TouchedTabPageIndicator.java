@@ -35,7 +35,6 @@ public class TouchedTabPageIndicator extends TabPageIndicator
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev)
 	{
-		setFocusable(true);
 		// 希望父容器不去拦截touch事件
 		getParent().requestDisallowInterceptTouchEvent(true);
 
