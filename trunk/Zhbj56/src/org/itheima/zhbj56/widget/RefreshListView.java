@@ -25,10 +25,20 @@ import android.widget.ListView;
  */
 public class RefreshListView extends ListView
 {
-	private static final String	TAG	= "RefreshListView";
-	private LinearLayout		mHeaderLayout;				// 头布局(刷新部分 + 自定义部分)
-	private View				mCustomHeaderView;			// 头布局中 自定义部分
-	private View				mRefreshView;				// 头布局中刷新的部分
+	private static final String	TAG						= "RefreshListView";
+
+	private static final int	STATE_PULL_DOWN_REFRESH	= 0;						// 下拉刷新状态
+	private static final int	STATE_RELEASE_REFRESH	= 1;						// 松开刷新状态
+	private static final int	STATE_REFRESHING		= 2;						// 正在刷新状态
+
+	private int					mCurrentState			= STATE_PULL_DOWN_REFRESH;	// 默认为下拉刷新状态
+
+	private LinearLayout		mHeaderLayout;										// 头布局(刷新部分
+																					// +
+																					// 自定义部分)
+	private View				mCustomHeaderView;									// 头布局中
+																					// 自定义部分
+	private View				mRefreshView;										// 头布局中刷新的部分
 	private int					mDownX;
 	private int					mDownY;
 	private int					mRefreshHeight;
@@ -95,8 +105,24 @@ public class RefreshListView extends ListView
 						Log.d(TAG, "第一个View可见");
 						// 希望看到刷新的View
 						// 改变头布局的PaddingTop
-						mHeaderLayout.setPadding(0, diffY - mRefreshHeight, 0, 0);
+						int paddingTop = diffY - mRefreshHeight;
+						mHeaderLayout.setPadding(0, paddingTop, 0, 0);
 
+						// 如果paddingTop是负数值的时候，说明刷新部分没有完全露出来，现在的状态为 下拉刷新
+						if (paddingTop < 0 && mCurrentState != STATE_PULL_DOWN_REFRESH)
+						{
+							// 说明刷新部分没有完全露出来，现在的状态为 下拉刷新
+							mCurrentState = STATE_PULL_DOWN_REFRESH;
+							Log.d(TAG, "当前状态为 : 下拉刷新");
+							// UI需要刷新 TODO:
+						}
+						else if (paddingTop >= 0 && mCurrentState != STATE_RELEASE_REFRESH)
+						{
+							// 如果刷新部分完全露出来说明PaddingTop>=0,现在的状态为 释放刷新
+							mCurrentState = STATE_RELEASE_REFRESH;
+							Log.d(TAG, "当前状态为 : 释放刷新");
+							// UI需要刷新 TODO:
+						}
 						// 消费掉
 						return true;
 					}
@@ -112,5 +138,4 @@ public class RefreshListView extends ListView
 
 		return super.onTouchEvent(ev);
 	}
-
 }
