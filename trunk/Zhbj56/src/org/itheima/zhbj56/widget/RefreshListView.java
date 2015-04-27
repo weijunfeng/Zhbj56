@@ -74,6 +74,8 @@ public class RefreshListView extends ListView implements OnScrollListener
 
 	private boolean				noMore;
 
+	private int					diffY;
+
 	public RefreshListView(Context context) {
 		super(context);
 
@@ -166,8 +168,7 @@ public class RefreshListView extends ListView implements OnScrollListener
 				int moveY = (int) (ev.getY() + 0.5f);
 
 				int diffX = moveX - mDownX;
-				int diffY = moveY - mDownY;
-				// 由上往下拉 diffY > 0
+				diffY = moveY - mDownY;
 
 				// 如果当前的状态为正在刷新，就不去响应touch
 				if (mCurrentState == STATE_REFRESHING)
@@ -235,6 +236,14 @@ public class RefreshListView extends ListView implements OnScrollListener
 			case MotionEvent.ACTION_CANCEL:
 				mDownX = 0;// 清空数据
 				mDownY = 0;// 清空数据
+
+				// 是否是下拉的操作
+				if (diffY <= 0)
+				{
+					break;
+				}
+
+				diffY = 0;
 
 				// 松开时的逻辑
 

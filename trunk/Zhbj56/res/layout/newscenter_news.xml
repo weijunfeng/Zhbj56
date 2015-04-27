@@ -4,24 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <org.itheima.zhbj56.widget.TouchedTabPageIndicator
-            android:id="@+id/newscenter_news_indicator"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/newscenter_news_arrow"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:src="@drawable/news_cate_arr" />
-    </LinearLayout>
+
+        <org.itheima.zhbj56.widget.TouchedTabPageIndicator
+            android:id="@+id/newscenter_news_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/newscenter_news_arrow" />
+    </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/newscenter_news_pager"
