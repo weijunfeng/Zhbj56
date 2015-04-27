@@ -224,5 +224,17 @@ public class NewsCenterTabController extends TabController
 		// 加载数据
 		menuController.initData();
 
+		// 判断是否是组图controller
+		if (menuController instanceof PicMenuController)
+		{
+			// 是组图页面
+			mIbListOrGrid.setVisibility(View.VISIBLE);
+			((PicMenuController) menuController).setSwitchButton(mIbListOrGrid);
+		}
+		else
+		{
+			mIbListOrGrid.setVisibility(View.GONE);
+		}
+
 	}
 }

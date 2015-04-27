@@ -31,6 +31,7 @@ public abstract class TabController implements OnClickListener
 	protected Context		mContext;
 
 	protected ImageButton	mIbMenu;
+	protected ImageButton	mIbListOrGrid;
 	protected TextView		mTvTitle;
 	protected FrameLayout	mContentContainer;
 
@@ -49,6 +50,7 @@ public abstract class TabController implements OnClickListener
 		View view = View.inflate(mContext, R.layout.base_tab, null);
 
 		mIbMenu = (ImageButton) view.findViewById(R.id.tab_ib_menu);
+		mIbListOrGrid = (ImageButton) view.findViewById(R.id.tab_ib_list_or_grid);
 		mTvTitle = (TextView) view.findViewById(R.id.tab_tv_title);
 		mContentContainer = (FrameLayout) view.findViewById(R.id.tab_container_content);
 

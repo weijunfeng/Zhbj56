@@ -22,4 +22,10 @@ public interface Constans
 	 * 新闻中心的网络接口
 	 */
 	String	NEWSCENTER_URL	= BASE_URL + "/categories.json";
+
+	/**
+	 * 获取组图的接口
+	 */
+
+	String	PHOTOS_URL		= BASE_URL + "/photos/photos_1.json";
 }

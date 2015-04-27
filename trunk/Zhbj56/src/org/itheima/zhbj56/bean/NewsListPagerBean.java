@@ -41,6 +41,9 @@ public class NewsListPagerBean
 		public String	title;
 		public String	type;
 		public String	url;
+
+		public String	largeimage;
+		public String	smallimage;
 	}
 
 	public class NewsTopicBean
