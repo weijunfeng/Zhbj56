@@ -11,6 +11,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -41,9 +44,11 @@ public class ImageHelper
 	// LinkedHashMap<String, SoftReference<Bitmap>>();
 
 	// LRUCahce 池子
-	private static LruCache<String, Bitmap>	mCache;
-	private static Handler					mHandler;
-	private Context							mContext;
+	private static LruCache<String, Bitmap>		mCache;
+	private static Handler						mHandler;
+	private static ExecutorService				mThreadPool;
+	private static Map<ImageView, Future<?>>	mTaskTags	= new LinkedHashMap<ImageView, Future<?>>();
+	private Context								mContext;
 
 	public ImageHelper(Context context) {
 		this.mContext = context;
@@ -63,6 +68,12 @@ public class ImageHelper
 		if (mHandler == null)
 		{
 			mHandler = new Handler();
+		}
+
+		if (mThreadPool == null)
+		{
+			// 最多同时允许的线程数为3个
+			mThreadPool = Executors.newFixedThreadPool(3);
 		}
 	}
 
@@ -106,7 +117,26 @@ public class ImageHelper
 	private void loadBitmapFromNet(ImageView iv, String url)
 	{
 		// 开线程去网络获取
-		new Thread(new ImageLoadTask(iv, url)).start();
+		// 使用线程池管理
+		// new Thread(new ImageLoadTask(iv, url)).start();
+
+		// 判断是否有线程在为 imageView加载数据
+		Future<?> futrue = mTaskTags.get(iv);
+		if (futrue != null && !futrue.isCancelled() && !futrue.isDone())
+		{
+			System.out.println("取消 任务");
+			// 线程正在执行
+			futrue.cancel(true);
+			futrue = null;
+		}
+
+		// mThreadPool.execute(new ImageLoadTask(iv, url));
+		futrue = mThreadPool.submit(new ImageLoadTask(iv, url));
+		// Future 和 callback/Runable
+		// 返回值，持有正在执行的线程
+		// 保存
+		mTaskTags.put(iv, futrue);
+		System.out.println("标记 任务");
 	}
 
 	class ImageLoadTask implements Runnable
