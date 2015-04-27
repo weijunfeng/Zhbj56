@@ -1,5 +1,7 @@
 package org.itheima.zhbj56.base.newscenter;
 
+import java.lang.ref.PhantomReference;
+import java.lang.ref.SoftReference;
 import java.util.List;
 
 import org.itheima.zhbj56.R;
@@ -7,6 +9,7 @@ import org.itheima.zhbj56.base.MenuController;
 import org.itheima.zhbj56.bean.NewsListPagerBean;
 import org.itheima.zhbj56.bean.NewsListPagerBean.NewsItemBean;
 import org.itheima.zhbj56.utils.Constans;
+import org.itheima.zhbj56.utils.ImageHelper;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.BitmapUtils;
@@ -19,6 +22,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -51,16 +55,19 @@ public class PicMenuController extends MenuController implements OnClickListener
 	// private TextView tv;
 
 	@ViewInject(R.id.newscenter_pic_list_view)
-	private ListView			mListView;
+	private ListView					mListView;
 
 	@ViewInject(R.id.newscenter_pic_grid_view)
-	private GridView			mGridView;
+	private GridView					mGridView;
 
-	private List<NewsItemBean>	mNewsPics;
+	private List<NewsItemBean>			mNewsPics;
 
-	private BitmapUtils			mBitmapUtils;
+	private BitmapUtils					mBitmapUtils;
+	private ImageHelper					mHelper;
 
-	private boolean				isGrid;		// 默认为list显示方式
+	private boolean						isGrid;		// 默认为list显示方式
+
+	private PhantomReference<Bitmap>	mReference;
 
 	public PicMenuController(Context context) {
 		super(context);
@@ -82,7 +89,8 @@ public class PicMenuController extends MenuController implements OnClickListener
 		// 注入
 		ViewUtils.inject(this, view);
 
-		mBitmapUtils = new BitmapUtils(mContext);
+		// mBitmapUtils = new BitmapUtils(mContext);
+		mHelper = new ImageHelper(mContext);
 
 		return view;
 	}
@@ -186,7 +194,9 @@ public class PicMenuController extends MenuController implements OnClickListener
 			holder.ivIcon.setImageResource(R.drawable.pic_item_list_default);
 
 			// 去网络获取图片
-			mBitmapUtils.display(holder.ivIcon, bean.listimage);
+			// mBitmapUtils.display(holder.ivIcon, bean.listimage);
+
+			mHelper.display(holder.ivIcon, bean.listimage);
 
 			return convertView;
 		}
