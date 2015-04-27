@@ -1,5 +1,8 @@
 package org.itheima.zhbj56.widget;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.itheima.zhbj56.R;
 
 import android.content.Context;
@@ -299,11 +302,20 @@ public class RefreshListView extends ListView implements OnScrollListener
 		setRefreshFinish(false);
 	}
 
+	public void setRereshTime(long date)
+	{
+		mTvTime.setText(getDateString(date));
+	}
+
 	/**
 	 * 设置下拉刷新结束
 	 */
 	public void setRefreshFinish(boolean noMore)
 	{
+		long currentTimeMillis = System.currentTimeMillis();
+		// 设置更新的时间
+		mTvTime.setText(getDateString(currentTimeMillis));
+
 		if (isLoadMore)
 		{
 			isLoadMore = false;
@@ -330,6 +342,12 @@ public class RefreshListView extends ListView implements OnScrollListener
 			int end = -mRefreshHeight;
 			doHeaderAnimation(start, end);
 		}
+	}
+
+	private String getDateString(long time)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		return sdf.format(new Date(time));
 	}
 
 	private void doHeaderAnimation(int start, int end)

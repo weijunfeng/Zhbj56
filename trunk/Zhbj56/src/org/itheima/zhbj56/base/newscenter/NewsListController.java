@@ -16,6 +16,7 @@ import org.itheima.zhbj56.widget.RefreshListView.OnRefreshListener;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -156,6 +157,8 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 
 				// 设置缓存
 				CacheUtils.setString(mContext, url, result);
+
+				mListView.setRereshTime(System.currentTimeMillis());
 
 				processData(result);
 
@@ -323,6 +326,10 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 			holder.ivIcon.setImageResource(R.drawable.pic_item_list_default);
 			// 去网络加载图片
 			mBitmapUtils.display(holder.ivIcon, bean.listimage);
+
+			// 判断是否有缓存
+			boolean cache = CacheUtils.getBoolean(mContext, bean.id + "");
+			holder.tvTitle.setTextColor(cache ? Color.GRAY : Color.BLACK);
 
 			return convertView;
 		}
@@ -523,7 +530,13 @@ public class NewsListController extends MenuController implements OnPageChangeLi
 		if (position >= mNewsDatas.size()) { return; }
 
 		NewsItemBean bean = mNewsDatas.get(position);
+		long newsId = bean.id;
+		// 缓存已读的数据
+		CacheUtils.setBoolean(mContext, "" + newsId, true);
+		// 通知UI刷新
+		mNewsAdapter.notifyDataSetChanged();
 
+		// 页面跳转
 		Intent intent = new Intent(mContext, DetailUI.class);
 		intent.putExtra(DetailUI.KEY_URL, bean.url);
 		mContext.startActivity(intent);
